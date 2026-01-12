@@ -50,18 +50,10 @@ run;
 
 *making fare groups for corr calculations;
 
-/* data fare_group; */
-/*     set titanic2; */
-/*     if Fare >= 0 and Fare < 10 then FareGroup = '0-10'; */
-/*     else if Fare >= 10 and Fare < 20 then FareGroup = '10-20'; */
-/*     else if Fare >= 20 and Fare < 30 then FareGroup = '20-30'; */
-/* *nvm this'll take forever, figuring out how to do loops in sas; */
-/* run; */
-
 data fare_groups;
 	set tit_fare;
 	length faregroup $10; 
-    do i = 0 to 520 by 5; *sas for loop;
+    do i = 0 to 520 by 5; /*sas for loop */
         if fare >= i and fare < i + 5 then faregroup = cats(i, '-', i + 5);
     end;
 run;
@@ -87,7 +79,6 @@ data age_groups;
     if Survived = 'Yes' then surv_num = 1;
     else if Survived = 'No' then surv_num = 0;
 run;
-
 
 /*  */
 /* HBAR and VBAR charts */
@@ -119,6 +110,7 @@ proc gchart data = tit_surv;
 	hbar Sex/subgroup = Pclass; *hbar version- I prefer this one, too much whitespace in the vbar and easier to see sex distribution;
 	where Age ne -99;
 run; 
+
 /*  */
 /* Pie Charts */
 /*  */
@@ -136,6 +128,7 @@ proc gchart data = tit_class;
 	title "Survival Pie Chart by Class";
 	pie Survived/group= Pclass;
 run;
+
 /*  */
 /* Stats */
 /*  */
@@ -206,6 +199,7 @@ proc univariate data = tit_surv noprint; * this makes 4 graphs, survived(yes):M 
 	histogram Age/normal midpoints= (0 to 81 by 2);
 	inset mean= "Average"(6.3) std="Standard Dev"(4.3) skewness="Skew"(5.3) kurtosis = "Kurt"(5.3)  /pos = NE;
 run;
+
 /*  */
 /* *everything below is to make a correlation graph of fare and survival percent; */
 /*  */
@@ -242,6 +236,7 @@ proc corr data = fare_groups_per plots=scatter;
 	title "Fare vs Percent Survival";
 	var fare surv_per;
 run;
+
 /*  */
 /* correlation graph for age vs percent survival by sex */
 /*  */
@@ -286,6 +281,7 @@ proc corr data = age_groups_per plots=scatter;
 	var age surv_per;
 	by sex;
 run;
+
 /*  */
 /* correlation graph class vs percent survival */
 /*  */
@@ -365,7 +361,6 @@ run;
 data titanic_dummy;
 set titanic;
 run;
-
 
 /* Data pre processing, replaced missing age values for the mean, used one-hot encoding to
 transform categorical variables such as survival and sex to binary attributes so the model can
